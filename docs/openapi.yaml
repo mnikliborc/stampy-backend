@@ -1,0 +1,809 @@
+openapi: 3.0.1
+info:
+  title: stampy
+  version: 1.0.0
+paths:
+  /user/register:
+    post:
+      tags:
+      - anonymous
+      description: '
+
+        Register user. Returns ''apiKey'' to be used as ''Authorization: bearer''
+        header.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: postUserRegister
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_Register_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_Register_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+  /user/login:
+    post:
+      tags:
+      - anonymous
+      description: '
+
+        Login user. Returns ''apiKey'' to be used as ''Authorization: bearer'' header.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: postUserLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_Login_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_Login_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+  /org/register:
+    post:
+      tags:
+      - org
+      description: '
+
+        Register organization.
+
+        '
+      operationId: postOrgRegister
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Org_Register_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org_Register_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/owned:
+    get:
+      tags:
+      - org
+      description: '
+
+        Get owned organizations.
+
+        '
+      operationId: getOrgOwned
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org_Owned_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/invite:
+    post:
+      tags:
+      - org
+      description: '
+
+        Invite user to organization.
+
+        Requires ''Authorization: Bearer {apiKey}'' header where ''apiKey'' obtained
+        from ''select-organization'' route.
+
+        '
+      operationId: postOrgInvite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Org_Invite_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org_Invite_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/status:
+    get:
+      tags:
+      - org
+      description: '
+
+        Get organization invites and members. Owner only.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: getOrgStatus
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Get_Org_Status_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/{orgId}/invite/accept:
+    get:
+      tags:
+      - org
+      description: '
+
+        Accept organization invite.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: getOrgOrgidInviteAccept
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/{orgId}/invite/reject:
+    get:
+      tags:
+      - org
+      description: '
+
+        Reject organization invite.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: getOrgOrgidInviteReject
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/member/{memberId}/remove:
+    get:
+      tags:
+      - org
+      description: '
+
+        Remove member from organization.
+
+        You need to call ''select-organization'' route to retrieve ''apiKey'' with
+        organization context.
+
+        '
+      operationId: getOrgMemberMemberidRemove
+      parameters:
+      - name: memberId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /org/{orgId}/select:
+    get:
+      tags:
+      - org
+      description: '
+
+        Select organization. Returns ''apiKey'' with organization context. Use it
+        in ''Authorization: Bearer {apiKey}'' header.
+
+        '
+      operationId: select-organization
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org_Select_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /packet/buy:
+    post:
+      tags:
+      - packet
+      description: '
+
+        Gives stamp packet to the org. This is dummy endpoint that creates packet
+        with 10 stamps valid 10 minutes.
+
+        Requires ''Authorization: Bearer {apiKey}'' header where ''apiKey'' obtained
+        from ''select-organization'' route.
+
+        '
+      operationId: postPacketBuy
+      responses:
+        '200':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /packet/status:
+    get:
+      tags:
+      - packet
+      description: '
+
+        Returns stamp packets status of the org.
+
+        Requires ''Authorization: Bearer {apiKey}'' header where ''apiKey'' obtained
+        from ''select-organization'' route.
+
+        '
+      operationId: getPacketStatus
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /stamp/register:
+    post:
+      tags:
+      - stamp
+      description: '
+
+        Register stamp.
+
+        Requires ''Authorization: Bearer {apiKey}'' header where ''apiKey'' obtained
+        from ''select-organization'' route.
+
+        '
+      operationId: postStampRegister
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stamp_Register_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stamp_Register_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /stamp/claim:
+    post:
+      tags:
+      - stamp
+      description: '
+
+        Claim stamps.
+
+        Requires ''Authorization: Bearer {apiKey}'' header where ''apiKey'' obtained
+        from ''select-organization'' route.
+
+        '
+      operationId: postStampClaim
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stamp_Claim_IN'
+        required: true
+      responses:
+        '200':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /user/self:
+    get:
+      tags:
+      - user
+      description: '
+
+        Get user.
+
+        '
+      operationId: getUserSelf
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_GetSelf_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /user/invites:
+    get:
+      tags:
+      - user
+      description: '
+
+        List organization invites.
+
+        '
+      operationId: getUserInvites
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_ListOrgInvites_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+  /user/memberships:
+    get:
+      tags:
+      - user
+      description: '
+
+        List organization memberships.
+
+        '
+      operationId: getUserMemberships
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User_ListOrgMembership_OUT'
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error_OUT'
+      security:
+      - httpAuth: []
+components:
+  schemas:
+    User_Register_IN:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+    Error_OUT:
+      required:
+      - error
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          $ref: '#/components/schemas/Json'
+    Json: {}
+    User_Register_OUT:
+      required:
+      - apiKey
+      type: object
+      properties:
+        apiKey:
+          type: string
+    User_Login_IN:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+        apiKeyValidHours:
+          type: integer
+    User_Login_OUT:
+      required:
+      - apiKey
+      type: object
+      properties:
+        apiKey:
+          type: string
+    Org_Register_IN:
+      required:
+      - name
+      - cardTemplate
+      type: object
+      properties:
+        name:
+          type: string
+        cardTemplate:
+          $ref: '#/components/schemas/Card_Template_IN'
+    Card_Template_IN:
+      required:
+      - description
+      - size
+      - cardExpiresInMonths
+      type: object
+      properties:
+        description:
+          type: string
+        size:
+          type: integer
+        cardExpiresInMonths:
+          type: integer
+    Org_Register_OUT:
+      required:
+      - orgId
+      - freeStamps
+      - stampsValidForDays
+      type: object
+      properties:
+        orgId:
+          type: string
+        freeStamps:
+          type: integer
+        stampsValidForDays:
+          type: integer
+    Org_Owned_OUT:
+      type: object
+      properties:
+        orgs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Org'
+    Org:
+      required:
+      - id
+      - ownerId
+      - name
+      - createdOn
+      type: object
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+        name:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+    Org_Invite_IN:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+    Org_Invite_OUT:
+      required:
+      - invite
+      type: object
+      properties:
+        invite:
+          $ref: '#/components/schemas/OrgInvite'
+    OrgInvite:
+      required:
+      - invitedUserId
+      - orgId
+      - createdOn
+      type: object
+      properties:
+        invitedUserId:
+          type: string
+        orgId:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+    Get_Org_Status_OUT:
+      type: object
+      properties:
+        invites:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgInviteWithInviteeEmail'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberWithUserEmail'
+        packets:
+          type: array
+          items:
+            $ref: '#/components/schemas/StampPacket'
+    OrgInviteWithInviteeEmail:
+      required:
+      - orgInvite
+      - inviteeEmail
+      type: object
+      properties:
+        orgInvite:
+          $ref: '#/components/schemas/OrgInvite'
+        inviteeEmail:
+          type: string
+    MemberWithUserEmail:
+      required:
+      - userId
+      - userEmail
+      - membership
+      type: object
+      properties:
+        userId:
+          type: string
+        userEmail:
+          type: string
+        membership:
+          $ref: '#/components/schemas/Membership'
+    Membership:
+      required:
+      - role
+      - orgId
+      type: object
+      properties:
+        role:
+          type: string
+        orgId:
+          type: string
+    StampPacket:
+      required:
+      - id
+      - orgId
+      - size
+      - used
+      - createdOn
+      - validUntil
+      type: object
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        size:
+          type: integer
+        used:
+          type: integer
+        createdOn:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+    Org_Select_OUT:
+      required:
+      - apiKey
+      type: object
+      properties:
+        apiKey:
+          type: string
+    Status_OUT:
+      required:
+      - availableStamps
+      type: object
+      properties:
+        active:
+          type: array
+          items:
+            $ref: '#/components/schemas/StampPacket'
+        inactive:
+          type: array
+          items:
+            $ref: '#/components/schemas/StampPacket'
+        availableStamps:
+          type: integer
+    Stamp_Register_IN:
+      required:
+      - stampId
+      type: object
+      properties:
+        stampId:
+          type: string
+    Stamp_Register_OUT:
+      required:
+      - cardTemplateVersion
+      - stampsAvailable
+      type: object
+      properties:
+        cardTemplateVersion:
+          type: integer
+        stampsAvailable:
+          type: integer
+    Stamp_Claim_IN:
+      type: object
+      properties:
+        stampIds:
+          type: array
+          items:
+            type: string
+    User_GetSelf_OUT:
+      required:
+      - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      required:
+      - id
+      - email
+      - createdOn
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+    User_ListOrgInvites_OUT:
+      type: object
+      properties:
+        invites:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgInviteWithName'
+    OrgInviteWithName:
+      required:
+      - orgInvite
+      - orgName
+      type: object
+      properties:
+        orgInvite:
+          $ref: '#/components/schemas/OrgInvite'
+        orgName:
+          type: string
+    User_ListOrgMembership_OUT:
+      type: object
+      properties:
+        memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/MembershipWithOrgName'
+    MembershipWithOrgName:
+      required:
+      - orgName
+      - membership
+      type: object
+      properties:
+        orgName:
+          type: string
+        membership:
+          $ref: '#/components/schemas/Membership'
+  securitySchemes:
+    httpAuth:
+      type: http
+      scheme: bearer
